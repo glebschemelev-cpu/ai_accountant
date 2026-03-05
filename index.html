@@ -1,0 +1,100 @@
+<!doctype html>
+<html lang="ru">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Business Navigator AI Demo</title>
+  <style>
+    :root {
+      --bg: #f0f4f8;
+      --surface: #ffffff;
+      --text: #112438;
+      --muted: #587086;
+      --brand: #1c7c54;
+      --line: #d7e1ea;
+    }
+
+    * { box-sizing: border-box; }
+
+    body {
+      margin: 0;
+      font-family: "IBM Plex Sans", "Segoe UI", Arial, sans-serif;
+      background: radial-gradient(circle at 12% 8%, #ffffff 0%, #eef3f8 52%, #e8eff6 100%);
+      color: var(--text);
+      min-height: 100vh;
+      display: grid;
+      place-items: center;
+      padding: 24px;
+    }
+
+    .card {
+      width: min(900px, 100%);
+      background: var(--surface);
+      border: 1px solid var(--line);
+      border-radius: 18px;
+      padding: 26px;
+      box-shadow: 0 18px 40px rgba(15, 32, 47, 0.1);
+    }
+
+    h1 {
+      margin: 0 0 8px;
+      font-family: "Manrope", "Segoe UI", Arial, sans-serif;
+      font-size: 36px;
+      letter-spacing: -0.02em;
+    }
+
+    p {
+      margin: 0 0 20px;
+      color: var(--muted);
+      line-height: 1.45;
+    }
+
+    .links {
+      display: grid;
+      gap: 10px;
+    }
+
+    a.link {
+      display: block;
+      text-decoration: none;
+      border: 1px solid var(--line);
+      border-radius: 12px;
+      padding: 14px 16px;
+      background: #fbfdff;
+      color: var(--text);
+      font-weight: 600;
+    }
+
+    a.link:hover {
+      border-color: #bfd3e2;
+      background: #f3f9fd;
+    }
+
+    .primary {
+      border-color: #b7d7c5 !important;
+      background: #edf8f2 !important;
+      color: #115236 !important;
+    }
+
+    .meta {
+      margin-top: 16px;
+      font-size: 13px;
+      color: #6a7f92;
+    }
+  </style>
+</head>
+<body>
+  <main class="card">
+    <h1>Business Navigator AI</h1>
+    <p>Демо-пакет продукта: кликабельный веб-прототип, FAQ и презентация.</p>
+    <section class="links">
+      <a class="link primary" href="/business-navigator-product-prototype.html">Открыть кликабельный прототип</a>
+      <a class="link" href="/google-drive-ready/FAQ-product.md">FAQ по продукту</a>
+      <a class="link" href="/google-drive-ready/Product-presentation.md">Презентация продукта</a>
+      <a class="link" href="https://www.figma.com/design/RhuZWUv4zTiy9y5QEMN6Ht" target="_blank" rel="noopener noreferrer">Figma: Product Web Prototype</a>
+      <a class="link" href="https://www.figma.com/design/j2y3FRsKz31VkGBu1lIZ8r" target="_blank" rel="noopener noreferrer">Figma: One-pager</a>
+    </section>
+    <div class="meta">Build: demo deployment for Railway</div>
+  </main>
+</body>
+</html>
