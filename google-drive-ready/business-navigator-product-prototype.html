@@ -1,0 +1,1495 @@
+<!doctype html>
+<html lang="ru">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Business Navigator AI - Product Prototype</title>
+  <script src="https://mcp.figma.com/mcp/html-to-design/capture.js" async></script>
+  <style>
+    :root {
+      --bg: #f0f3f7;
+      --surface: #ffffff;
+      --sidebar: #0f1f2d;
+      --sidebar-muted: #8ca2b5;
+      --text: #132434;
+      --muted: #5f7386;
+      --line: #d9e2eb;
+      --brand: #1c7c54;
+      --brand-soft: #e8f4ee;
+      --signal: #2f80ed;
+      --warn: #f59f00;
+      --bad: #e05252;
+      --radius: 16px;
+      --shadow: 0 14px 32px rgba(18, 39, 57, 0.08);
+    }
+
+    * { box-sizing: border-box; }
+
+    body {
+      margin: 0;
+      background: radial-gradient(circle at 15% 5%, #ffffff 0%, #edf2f7 45%, #e6edf5 100%);
+      color: var(--text);
+      font-family: "IBM Plex Sans", "Segoe UI", Arial, sans-serif;
+      height: 100vh;
+      overflow: hidden;
+    }
+
+    .app {
+      display: grid;
+      grid-template-columns: 272px 1fr;
+      height: 100vh;
+    }
+
+    .sidebar {
+      background: linear-gradient(180deg, #122738 0%, #0d1c29 100%);
+      color: #e6f0f8;
+      padding: 20px 16px;
+      border-right: 1px solid rgba(255, 255, 255, 0.06);
+      display: flex;
+      flex-direction: column;
+      gap: 18px;
+    }
+
+    .logo {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      padding: 10px;
+      border-radius: 12px;
+      background: rgba(255, 255, 255, 0.05);
+    }
+
+    .logo-mark {
+      width: 30px;
+      height: 30px;
+      border-radius: 10px;
+      background: linear-gradient(145deg, #1c7c54, #2f80ed);
+    }
+
+    .logo b {
+      font-family: "Manrope", "Segoe UI", Arial, sans-serif;
+      font-size: 16px;
+      letter-spacing: -0.02em;
+    }
+
+    .nav {
+      display: grid;
+      gap: 6px;
+    }
+
+    .nav-item {
+      border: 1px solid transparent;
+      border-radius: 12px;
+      padding: 11px 12px;
+      color: var(--sidebar-muted);
+      font-size: 14px;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      background: transparent;
+      cursor: pointer;
+      width: 100%;
+      text-align: left;
+    }
+
+    .nav-item:hover {
+      border-color: rgba(255, 255, 255, 0.15);
+      color: #d8e6f3;
+    }
+
+    .nav-item.active {
+      color: #fff;
+      background: rgba(47, 128, 237, 0.16);
+      border-color: rgba(47, 128, 237, 0.32);
+    }
+
+    .badge {
+      font-size: 12px;
+      padding: 2px 8px;
+      border-radius: 999px;
+      background: rgba(255, 255, 255, 0.1);
+      color: #d2deea;
+    }
+
+    .badge.alert {
+      background: rgba(224, 82, 82, 0.2);
+      color: #ffc7c7;
+    }
+
+    .spacer { flex: 1; }
+
+    .team-card {
+      border: 1px solid rgba(255, 255, 255, 0.09);
+      border-radius: 12px;
+      padding: 12px;
+      background: rgba(255, 255, 255, 0.05);
+    }
+
+    .team-card small { color: #a7bacb; }
+
+    .main {
+      padding: 18px;
+      display: grid;
+      grid-template-rows: auto auto auto 1fr;
+      gap: 14px;
+      overflow: auto;
+    }
+
+    .topbar {
+      background: var(--surface);
+      border: 1px solid var(--line);
+      border-radius: var(--radius);
+      box-shadow: var(--shadow);
+      padding: 14px 16px;
+      display: grid;
+      grid-template-columns: 1fr auto;
+      align-items: center;
+      gap: 12px;
+    }
+
+    .crumb {
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      margin-bottom: 6px;
+      font-size: 12px;
+      color: #607385;
+      background: #eef3f8;
+      border: 1px solid #dce5ed;
+      border-radius: 999px;
+      padding: 4px 10px;
+    }
+
+    .topbar h1 {
+      margin: 0;
+      font-family: "Manrope", "Segoe UI", Arial, sans-serif;
+      font-size: 24px;
+      letter-spacing: -0.02em;
+    }
+
+    .topbar p {
+      margin: 4px 0 0;
+      color: var(--muted);
+      font-size: 14px;
+    }
+
+    .actions {
+      display: flex;
+      gap: 8px;
+      align-items: center;
+      flex-wrap: wrap;
+      justify-content: flex-end;
+    }
+
+    .filters {
+      background: var(--surface);
+      border: 1px solid var(--line);
+      border-radius: 14px;
+      box-shadow: var(--shadow);
+      padding: 10px 12px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 10px;
+      flex-wrap: wrap;
+    }
+
+    .chips {
+      display: flex;
+      gap: 8px;
+      flex-wrap: wrap;
+    }
+
+    .chip {
+      border: 1px solid #d8e3ec;
+      background: #f6fafe;
+      color: #35566f;
+      border-radius: 999px;
+      padding: 6px 10px;
+      font-size: 12px;
+      font-weight: 600;
+      cursor: pointer;
+    }
+
+    .chip.active {
+      border-color: #b8d4e6;
+      background: #ebf4fb;
+      color: #234b67;
+    }
+
+    .chip.secondary {
+      border-style: dashed;
+      background: #f9fbfd;
+      color: #5e7488;
+    }
+
+    .btn {
+      border: 0;
+      border-radius: 12px;
+      padding: 10px 14px;
+      font-weight: 600;
+      font-size: 14px;
+      cursor: pointer;
+    }
+
+    .btn.primary {
+      background: var(--brand);
+      color: #fff;
+    }
+
+    .btn.primary:hover {
+      background: #186a47;
+    }
+
+    .btn.ghost {
+      background: #eef3f8;
+      color: var(--text);
+      border: 1px solid #dce5ed;
+    }
+
+    .btn.ghost:hover {
+      background: #e3ebf3;
+    }
+
+    .kpi {
+      display: grid;
+      grid-template-columns: repeat(5, minmax(0, 1fr));
+      gap: 10px;
+    }
+
+    .kpi-card {
+      background: var(--surface);
+      border: 1px solid var(--line);
+      border-radius: 14px;
+      padding: 12px;
+      box-shadow: var(--shadow);
+    }
+
+    .kpi-card .label {
+      color: var(--muted);
+      font-size: 12px;
+      margin-bottom: 8px;
+    }
+
+    .kpi-card .value {
+      font-family: "Manrope", "Segoe UI", Arial, sans-serif;
+      font-size: 28px;
+      font-weight: 800;
+      letter-spacing: -0.03em;
+      margin-bottom: 6px;
+    }
+
+    .delta {
+      font-size: 12px;
+      font-weight: 600;
+      border-radius: 999px;
+      display: inline-block;
+      padding: 2px 8px;
+    }
+
+    .delta.good {
+      color: #1f7a50;
+      background: #e8f4ee;
+    }
+
+    .delta.bad {
+      color: #9c3d3d;
+      background: #fbeaea;
+    }
+
+    .delta.warn {
+      color: #8f5f1e;
+      background: #fff3e0;
+    }
+
+    .content-grid {
+      display: grid;
+      grid-template-columns: 1.8fr 1fr;
+      gap: 10px;
+    }
+
+    .panel {
+      background: var(--surface);
+      border: 1px solid var(--line);
+      border-radius: 14px;
+      box-shadow: var(--shadow);
+      padding: 14px;
+    }
+
+    .panel h2 {
+      margin: 0 0 10px;
+      font-size: 16px;
+      font-family: "Manrope", "Segoe UI", Arial, sans-serif;
+      letter-spacing: -0.01em;
+    }
+
+    .tab-row {
+      display: flex;
+      gap: 8px;
+      margin-bottom: 12px;
+      flex-wrap: wrap;
+    }
+
+    .tab {
+      border: 1px solid var(--line);
+      border-radius: 999px;
+      padding: 6px 10px;
+      font-size: 12px;
+      color: var(--muted);
+      background: #f7fafc;
+      cursor: pointer;
+    }
+
+    .tab.active {
+      border-color: #b8d4e6;
+      background: #ecf5fb;
+      color: #2f5f82;
+      font-weight: 600;
+    }
+
+    .chart {
+      height: 190px;
+      border-radius: 12px;
+      background:
+        linear-gradient(180deg, rgba(47, 128, 237, 0.12), rgba(47, 128, 237, 0.01)),
+        repeating-linear-gradient(0deg, #eef3f8 0 1px, transparent 1px 32px),
+        repeating-linear-gradient(90deg, #f2f6fa 0 1px, transparent 1px 44px);
+      border: 1px solid #dde7f0;
+      position: relative;
+      overflow: hidden;
+    }
+
+    .line {
+      position: absolute;
+      left: 16px;
+      right: 16px;
+      top: 34px;
+      height: 120px;
+    }
+
+    .line svg {
+      width: 100%;
+      height: 100%;
+    }
+
+    .two-col {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 10px;
+      margin-top: 10px;
+    }
+
+    .mini {
+      border: 1px solid var(--line);
+      border-radius: 12px;
+      padding: 10px;
+      background: #fbfdff;
+    }
+
+    .mini strong {
+      display: block;
+      font-size: 14px;
+      margin-bottom: 8px;
+    }
+
+    .progress {
+      background: #eaf0f6;
+      border-radius: 999px;
+      height: 8px;
+      overflow: hidden;
+      margin-top: 6px;
+    }
+
+    .progress > span {
+      display: block;
+      height: 100%;
+      background: linear-gradient(90deg, #1c7c54, #2f80ed);
+    }
+
+    .alerts {
+      display: grid;
+      gap: 8px;
+      margin-bottom: 10px;
+    }
+
+    .alert {
+      border: 1px solid #f1d9c0;
+      border-radius: 10px;
+      background: #fff8ef;
+      padding: 10px;
+      font-size: 13px;
+    }
+
+    .alert.bad {
+      border-color: #f2cccc;
+      background: #fff3f3;
+    }
+
+    table {
+      width: 100%;
+      border-collapse: collapse;
+      font-size: 12px;
+    }
+
+    th, td {
+      text-align: left;
+      border-bottom: 1px solid #edf2f7;
+      padding: 8px 4px;
+      vertical-align: top;
+    }
+
+    th {
+      color: var(--muted);
+      font-weight: 600;
+    }
+
+    .status {
+      font-size: 11px;
+      border-radius: 999px;
+      display: inline-block;
+      padding: 2px 8px;
+      font-weight: 600;
+    }
+
+    .status.ok {
+      background: #e8f4ee;
+      color: #1f7a50;
+    }
+
+    .status.risk {
+      background: #fff3e2;
+      color: #9a6518;
+    }
+
+    .status.bad {
+      background: #fbeaea;
+      color: #8f2f2f;
+    }
+
+    .stack {
+      display: grid;
+      gap: 10px;
+    }
+
+    .tbd {
+      min-height: 380px;
+      display: grid;
+      place-items: center;
+      text-align: center;
+      padding: 36px;
+    }
+
+    .tbd-box {
+      max-width: 560px;
+      border: 1px dashed #b8c7d6;
+      border-radius: 16px;
+      background: #f7fbff;
+      padding: 30px;
+    }
+
+    .tbd-box h2 {
+      font-family: "Manrope", "Segoe UI", Arial, sans-serif;
+      margin: 0 0 10px;
+      font-size: 28px;
+      letter-spacing: -0.02em;
+    }
+
+    .tbd-box p {
+      margin: 0 0 16px;
+      color: var(--muted);
+      font-size: 15px;
+    }
+
+    .auth-screen {
+      position: fixed;
+      inset: 0;
+      display: grid;
+      place-items: center;
+      padding: 24px;
+      background:
+        radial-gradient(circle at 8% 10%, rgba(28, 124, 84, 0.15), transparent 35%),
+        radial-gradient(circle at 92% 80%, rgba(47, 128, 237, 0.12), transparent 32%),
+        linear-gradient(160deg, #eef3f7 0%, #f7fafc 60%, #edf2f6 100%);
+      z-index: 30;
+    }
+
+    .auth-card {
+      width: min(980px, 100%);
+      background: #fff;
+      border: 1px solid #d7e1ea;
+      border-radius: 20px;
+      box-shadow: 0 20px 44px rgba(16, 30, 44, 0.12);
+      display: grid;
+      grid-template-columns: 1.1fr 1fr;
+      overflow: hidden;
+    }
+
+    .auth-side {
+      padding: 26px;
+      background: linear-gradient(160deg, #102537 0%, #142f44 100%);
+      color: #e6f1fb;
+    }
+
+    .auth-side h2 {
+      margin: 0 0 10px;
+      font-family: "Manrope", "Segoe UI", Arial, sans-serif;
+      font-size: 30px;
+      letter-spacing: -0.02em;
+    }
+
+    .auth-side p {
+      margin: 0;
+      color: #aac0d3;
+      font-size: 14px;
+      line-height: 1.45;
+    }
+
+    .auth-metric {
+      margin-top: 18px;
+      display: grid;
+      gap: 8px;
+    }
+
+    .auth-metric div {
+      border: 1px solid rgba(255, 255, 255, 0.14);
+      border-radius: 10px;
+      padding: 10px;
+      background: rgba(255, 255, 255, 0.06);
+      font-size: 13px;
+    }
+
+    .auth-form {
+      padding: 26px;
+      display: grid;
+      gap: 10px;
+      align-content: start;
+    }
+
+    .auth-form h3 {
+      margin: 0 0 4px;
+      font-family: "Manrope", "Segoe UI", Arial, sans-serif;
+      font-size: 24px;
+      letter-spacing: -0.02em;
+    }
+
+    .auth-form p {
+      margin: 0 0 10px;
+      color: var(--muted);
+      font-size: 14px;
+    }
+
+    .field {
+      display: grid;
+      gap: 6px;
+      margin-bottom: 2px;
+    }
+
+    .field label {
+      font-size: 12px;
+      color: #567084;
+      font-weight: 600;
+    }
+
+    .field input {
+      width: 100%;
+      border: 1px solid #d4dee8;
+      border-radius: 10px;
+      padding: 10px 12px;
+      background: #fbfdff;
+      color: #173049;
+      font-size: 14px;
+    }
+
+    .field input:focus {
+      outline: 2px solid #cae2f4;
+      border-color: #9fc5e2;
+    }
+
+    .auth-row {
+      display: flex;
+      gap: 8px;
+      flex-wrap: wrap;
+      margin-top: 6px;
+    }
+
+    .hidden {
+      display: none !important;
+    }
+
+    .modal-backdrop {
+      position: fixed;
+      inset: 0;
+      background: rgba(15, 29, 43, 0.48);
+      display: grid;
+      place-items: center;
+      padding: 20px;
+      z-index: 40;
+    }
+
+    .modal {
+      width: min(520px, 100%);
+      background: #fff;
+      border: 1px solid #d8e2eb;
+      border-radius: 16px;
+      box-shadow: 0 18px 42px rgba(11, 24, 36, 0.3);
+      padding: 16px;
+      display: grid;
+      gap: 12px;
+    }
+
+    .modal h3 {
+      margin: 0;
+      font-family: "Manrope", "Segoe UI", Arial, sans-serif;
+      font-size: 21px;
+      letter-spacing: -0.02em;
+    }
+
+    .modal p {
+      margin: 0;
+      color: #4f6679;
+      font-size: 14px;
+      line-height: 1.45;
+    }
+
+    .modal-actions {
+      display: flex;
+      gap: 8px;
+      justify-content: flex-end;
+      flex-wrap: wrap;
+    }
+
+    .toast {
+      position: fixed;
+      right: 18px;
+      bottom: 18px;
+      background: #0f2232;
+      color: #eaf3fb;
+      border: 1px solid #203549;
+      border-radius: 12px;
+      padding: 12px 14px;
+      font-size: 13px;
+      box-shadow: 0 12px 30px rgba(9, 19, 29, 0.4);
+      opacity: 0;
+      transform: translateY(12px);
+      transition: opacity .18s ease, transform .18s ease;
+      pointer-events: none;
+      max-width: 380px;
+      z-index: 20;
+    }
+
+    .toast.show {
+      opacity: 1;
+      transform: translateY(0);
+    }
+
+    @media (max-width: 1300px) {
+      .app { grid-template-columns: 220px 1fr; }
+      .kpi { grid-template-columns: repeat(3, minmax(0, 1fr)); }
+      .content-grid { grid-template-columns: 1fr; }
+      .two-col { grid-template-columns: 1fr; }
+      .auth-card { grid-template-columns: 1fr; }
+    }
+  </style>
+</head>
+<body>
+  <section class="auth-screen" id="authScreen">
+    <div class="auth-card">
+      <div class="auth-side">
+        <h2>Business Navigator AI</h2>
+        <p>Демонстрационная среда продукта для производственных МСБ: управленческая аналитика, сценарии и AI-рекомендации в едином интерфейсе.</p>
+        <div class="auth-metric">
+          <div>84 активных клиента в модели</div>
+          <div>90-дневный прогноз cash-flow</div>
+          <div>Интеграция с 1С и ERP-потоками</div>
+        </div>
+      </div>
+      <div class="auth-form">
+        <h3>Вход в демо</h3>
+        <p>Выберите роль, чтобы открыть соответствующий пользовательский поток.</p>
+        <div class="field">
+          <label>Email</label>
+          <input type="email" value="demo@business-navigator.ai" readonly>
+        </div>
+        <div class="field">
+          <label>Организация</label>
+          <input type="text" value="ООО «ПромТех Север»" readonly>
+        </div>
+        <div class="auth-row">
+          <button class="btn primary" data-action="loginDemoCfo">Войти как CFO</button>
+          <button class="btn ghost" data-action="loginDemoCeo">Войти как CEO</button>
+        </div>
+        <div class="auth-row">
+          <button class="btn ghost" data-action="loginDemoAnalyst">Войти как Аналитик</button>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <div class="app hidden" id="appRoot">
+    <aside class="sidebar">
+      <div class="logo">
+        <div class="logo-mark"></div>
+        <div>
+          <b>Business Navigator AI</b><br>
+          <small>Product Console</small>
+        </div>
+      </div>
+
+      <nav class="nav">
+        <button class="nav-item active" data-route="dashboard">Дашборд <span class="badge">LIVE</span></button>
+        <button class="nav-item" data-route="cost">Себестоимость</button>
+        <button class="nav-item" data-route="margin">Маржинальность</button>
+        <button class="nav-item" data-route="cashflow">Cash-flow прогноз</button>
+        <button class="nav-item" data-route="scenarios">Сценарии <span class="badge alert">3</span></button>
+        <button class="nav-item" data-route="clients">Клиенты и контракты</button>
+        <button class="nav-item" data-route="integrations">Интеграция 1С</button>
+        <button class="nav-item" data-route="settings">Настройки</button>
+      </nav>
+
+      <div class="spacer"></div>
+
+      <div class="team-card">
+        <div id="teamName" style="font-weight:600;margin-bottom:4px">ООО «ПромТех Север»</div>
+        <small id="teamMeta">156 сотрудников · 2 площадки</small>
+        <button class="btn ghost" style="margin-top:10px;width:100%" data-action="logout">Сменить пользователя</button>
+      </div>
+    </aside>
+
+    <main class="main">
+      <header class="topbar">
+        <div>
+          <span class="crumb" id="crumb">Раздел / Дашборд</span>
+          <h1 id="pageTitle">Операционная панель CFO</h1>
+          <p id="pageSubtitle">Период: март 2026 · Обновление данных: 2 минуты назад</p>
+        </div>
+        <div class="actions" id="topActions"></div>
+      </header>
+
+      <section class="filters" id="filters"></section>
+
+      <section class="kpi" id="kpiBar"></section>
+
+      <section id="content"></section>
+    </main>
+  </div>
+
+  <div class="toast" id="toast"></div>
+  <div class="modal-backdrop hidden" id="modalBackdrop">
+    <div class="modal">
+      <h3 id="modalTitle">Действие</h3>
+      <p id="modalBody">Описание действия</p>
+      <div class="modal-actions" id="modalActions"></div>
+    </div>
+  </div>
+
+  <script>
+    const state = {
+      authenticated: false,
+      userRole: '',
+      userName: '',
+      route: 'dashboard',
+      scenario: 'Базовый',
+      tbdFeature: '',
+      period: 'march_2026',
+      legalEntity: 'ООО «ПромТех Север»',
+      aiRunning: false
+    };
+
+    const routeNames = {
+      dashboard: 'Дашборд',
+      cost: 'Себестоимость',
+      margin: 'Маржинальность',
+      cashflow: 'Cash-flow прогноз',
+      scenarios: 'Сценарии',
+      clients: 'Клиенты и контракты',
+      integrations: 'Интеграция 1С',
+      settings: 'Настройки',
+      tbd: 'TBD'
+    };
+
+    const periodLabels = {
+      march_2026: 'Март 2026',
+      q1_2026: 'Q1 2026',
+      ytd_2026: 'YTD 2026'
+    };
+
+    const routes = {
+      dashboard: {
+        title: 'Операционная панель CFO',
+        subtitle: 'Период: март 2026 · Обновление данных: 2 минуты назад',
+        kpis: [
+          { label: 'Выручка MTD', value: '52.4M ₽', delta: '+8.2%', tone: 'good' },
+          { label: 'Валовая маржа', value: '31.7%', delta: '+1.1 п.п.', tone: 'good' },
+          { label: 'Себестоимость', value: '35.8M ₽', delta: '+4.3%', tone: 'bad' },
+          { label: 'Прогноз cash-flow (90д)', value: '+11.2M ₽', delta: 'Стабильно', tone: 'good' },
+          { label: 'Риск кассового разрыва', value: '18%', delta: 'Нужен контроль', tone: 'warn' }
+        ],
+        actions: [
+          { label: `Сценарий: ${state.scenario}`, type: 'ghost', action: 'switchScenario' },
+          { label: 'Запустить AI-анализ', type: 'primary', action: 'runAi' }
+        ],
+        content: `
+          <div class="content-grid">
+            <article class="panel">
+              <h2>AI-прогноз выручки и денежных потоков</h2>
+              <div class="tab-row">
+                <button class="tab active" data-action="tab90">90 дней</button>
+                <button class="tab" data-action="tab180">180 дней</button>
+                <button class="tab" data-action="openConservative">Консервативный</button>
+                <button class="tab" data-action="openOptimistic">Оптимистичный</button>
+              </div>
+              <div class="chart">
+                <div class="line">
+                  <svg viewBox="0 0 1000 260" preserveAspectRatio="none">
+                    <polyline fill="none" stroke="#2f80ed" stroke-width="8" points="0,200 120,165 240,170 360,132 480,118 600,142 720,90 840,105 1000,58"/>
+                    <polyline fill="none" stroke="#1c7c54" stroke-width="8" stroke-dasharray="18 14" points="0,220 120,205 240,184 360,170 480,163 600,145 720,128 840,112 1000,95"/>
+                  </svg>
+                </div>
+              </div>
+              <div class="two-col">
+                <div class="mini">
+                  <strong>Сценарий A: Снижение издержек на 7%</strong>
+                  Потенциальный рост EBITDA: <b>+4.9M ₽</b>
+                  <div class="progress"><span style="width: 71%"></span></div>
+                  <div style="margin-top:10px"><button class="btn ghost" data-route="scenarios">Открыть сценарий</button></div>
+                </div>
+                <div class="mini">
+                  <strong>Сценарий B: Рост продаж на 12%</strong>
+                  Потенциальный рост выручки: <b>+8.2M ₽</b>
+                  <div class="progress"><span style="width: 84%"></span></div>
+                  <div style="margin-top:10px"><button class="btn ghost" data-route="scenarios">Открыть сценарий</button></div>
+                </div>
+              </div>
+            </article>
+
+            <article class="panel">
+              <h2>AI-алерты и рекомендации</h2>
+              <div class="alerts">
+                <div class="alert bad">Риск: закупки сырья превышают план на 9.4%. Рекомендация: перенести закупку по группе B на 2 недели.</div>
+                <div class="alert">Отклонение маржинальности по продукту «Линия-4»: -2.1 п.п. Рекомендация: пересчитать норму брака и цену упаковки.</div>
+                <div class="alert">В апреле ожидается кассовый разрыв на 3.2M ₽. Рекомендация: сдвиг графика платежей 2 крупных клиентов.</div>
+              </div>
+              <div style="display:flex; gap:8px; margin-bottom:12px; flex-wrap: wrap;">
+                <button class="btn ghost" data-route="cashflow">К календарю платежей</button>
+                <button class="btn ghost" data-route="clients">Проверить клиентов</button>
+              </div>
+
+              <h2 style="margin-top:8px">Клиенты и оплата</h2>
+              <table>
+                <thead>
+                  <tr><th>Клиент</th><th>Сумма</th><th>Срок</th><th>Статус</th></tr>
+                </thead>
+                <tbody>
+                  <tr><td>ПромЛайн</td><td>4.8M ₽</td><td>14.03</td><td><span class="status ok">ОК</span></td></tr>
+                  <tr><td>СеверМет</td><td>3.1M ₽</td><td>18.03</td><td><span class="status risk">Риск</span></td></tr>
+                  <tr><td>ТехноСоюз</td><td>2.6M ₽</td><td>22.03</td><td><span class="status ok">ОК</span></td></tr>
+                  <tr><td>ПромИнвест</td><td>1.9M ₽</td><td>27.03</td><td><span class="status risk">Риск</span></td></tr>
+                </tbody>
+              </table>
+            </article>
+          </div>
+        `
+      },
+
+      cost: {
+        title: 'Контроль себестоимости',
+        subtitle: 'Декомпозиция затрат по статьям, цехам и производственным линиям',
+        kpis: [
+          { label: 'План себестоимости', value: '34.3M ₽', delta: 'месяц', tone: 'warn' },
+          { label: 'Факт себестоимости', value: '35.8M ₽', delta: '+1.5M ₽', tone: 'bad' },
+          { label: 'Отклонение к плану', value: '+4.4%', delta: 'критично', tone: 'bad' },
+          { label: 'Эффект мер', value: '1.1M ₽', delta: 'потенциал', tone: 'good' },
+          { label: 'Срок достижения', value: '5 недель', delta: 'прогноз', tone: 'good' }
+        ],
+        actions: [
+          { label: 'Обновить из 1С', type: 'ghost', action: 'sync1c' },
+          { label: 'Сформировать план снижения', type: 'primary', action: 'openCostPlan' }
+        ],
+        content: `
+          <div class="content-grid">
+            <article class="panel">
+              <h2>Структура затрат</h2>
+              <table>
+                <thead><tr><th>Статья</th><th>План</th><th>Факт</th><th>Отклонение</th><th>Риск</th></tr></thead>
+                <tbody>
+                  <tr><td>Сырье</td><td>16.2M ₽</td><td>17.6M ₽</td><td>+8.6%</td><td><span class="status bad">Высокий</span></td></tr>
+                  <tr><td>ФОТ</td><td>7.4M ₽</td><td>7.1M ₽</td><td>-4.0%</td><td><span class="status ok">Низкий</span></td></tr>
+                  <tr><td>Энергия</td><td>2.8M ₽</td><td>3.0M ₽</td><td>+7.1%</td><td><span class="status risk">Средний</span></td></tr>
+                  <tr><td>Логистика</td><td>3.1M ₽</td><td>3.6M ₽</td><td>+16.1%</td><td><span class="status bad">Высокий</span></td></tr>
+                  <tr><td>Прочие</td><td>4.8M ₽</td><td>4.5M ₽</td><td>-6.2%</td><td><span class="status ok">Низкий</span></td></tr>
+                </tbody>
+              </table>
+            </article>
+            <article class="panel stack">
+              <div class="mini">
+                <strong>Рекомендация AI #1</strong>
+                Переключить 28% закупок сырья на альтернативного поставщика (экономия до 620k ₽).
+                <div style="margin-top:10px"><button class="btn ghost" data-action="tbd:Детальный план закупок">Открыть план</button></div>
+              </div>
+              <div class="mini">
+                <strong>Рекомендация AI #2</strong>
+                Пересмотреть ночной тариф энергопотребления для линии L2 (экономия до 290k ₽).
+                <div style="margin-top:10px"><button class="btn ghost" data-action="tbd:Карточка оптимизации энергии">Применить</button></div>
+              </div>
+              <div class="mini">
+                <strong>Рекомендация AI #3</strong>
+                Уменьшить долю срочной логистики на 12% через переразметку графика отгрузок.
+                <div style="margin-top:10px"><button class="btn ghost" data-action="tbd:Модуль логистического планирования">Открыть модуль</button></div>
+              </div>
+            </article>
+          </div>
+        `
+      },
+
+      margin: {
+        title: 'Маржинальность по продуктам и клиентам',
+        subtitle: 'Контроль валовой и операционной маржи в разрезе SKU и контрактов',
+        kpis: [
+          { label: 'Средняя маржа', value: '31.7%', delta: '+1.1 п.п.', tone: 'good' },
+          { label: 'SKU с маржой < 20%', value: '9', delta: 'из 74', tone: 'warn' },
+          { label: 'Низкомаржинальные клиенты', value: '4', delta: 'приоритет', tone: 'bad' },
+          { label: 'Потенциал роста', value: '+3.4 п.п.', delta: 'при корректировке', tone: 'good' },
+          { label: 'Порог маржи', value: '25%', delta: 'контроль', tone: 'warn' }
+        ],
+        actions: [
+          { label: 'Сегменты маржи', type: 'ghost', action: 'tbd:Сегментация клиентов' },
+          { label: 'Пересчитать цены', type: 'primary', action: 'tbd:Модуль ценообразования' }
+        ],
+        content: `
+          <div class="content-grid">
+            <article class="panel">
+              <h2>Топ-10 SKU по отклонению маржи</h2>
+              <table>
+                <thead><tr><th>SKU</th><th>Факт</th><th>План</th><th>Отклонение</th><th>Статус</th></tr></thead>
+                <tbody>
+                  <tr><td>Линия-4 / A12</td><td>18.1%</td><td>24.0%</td><td>-5.9 п.п.</td><td><span class="status bad">Критично</span></td></tr>
+                  <tr><td>Линия-2 / B07</td><td>20.4%</td><td>23.0%</td><td>-2.6 п.п.</td><td><span class="status risk">Риск</span></td></tr>
+                  <tr><td>Линия-1 / C31</td><td>32.0%</td><td>29.0%</td><td>+3.0 п.п.</td><td><span class="status ok">ОК</span></td></tr>
+                  <tr><td>Линия-3 / D09</td><td>27.8%</td><td>27.0%</td><td>+0.8 п.п.</td><td><span class="status ok">ОК</span></td></tr>
+                </tbody>
+              </table>
+            </article>
+            <article class="panel stack">
+              <div class="mini">
+                <strong>Рычаг #1: корректировка цен</strong>
+                Точечное повышение цены на 3.2% для 6 SKU может добавить до 1.7M ₽ в квартал.
+              </div>
+              <div class="mini">
+                <strong>Рычаг #2: оптимизация скидок</strong>
+                Снижение скидок в низкой эластичности добавляет до 0.9M ₽.
+              </div>
+              <div class="mini">
+                <strong>Рычаг #3: перераспределение ассортимента</strong>
+                Перевод спроса на более маржинальные SKU улучшает маржу на 1.1 п.п.
+              </div>
+              <button class="btn ghost" data-route="clients">Открыть клиентов с риском</button>
+            </article>
+          </div>
+        `
+      },
+
+      cashflow: {
+        title: 'Cash-flow и платежный календарь',
+        subtitle: 'Прогноз поступлений и выплат на 90/180 дней с оценкой кассовых разрывов',
+        kpis: [
+          { label: 'Входящий поток', value: '27.1M ₽', delta: '30 дней', tone: 'good' },
+          { label: 'Исходящий поток', value: '24.4M ₽', delta: '30 дней', tone: 'warn' },
+          { label: 'Чистый поток', value: '+2.7M ₽', delta: 'прогноз', tone: 'good' },
+          { label: 'Пиковый разрыв', value: '-3.2M ₽', delta: 'апрель', tone: 'bad' },
+          { label: 'Критические даты', value: '4', delta: 'в месяц', tone: 'warn' }
+        ],
+        actions: [
+          { label: 'Экспорт календаря', type: 'ghost', action: 'tbd:Экспорт календаря' },
+          { label: 'План анти-разрыва', type: 'primary', action: 'tbd:План анти-разрыва' }
+        ],
+        content: `
+          <div class="content-grid">
+            <article class="panel">
+              <h2>Платежный календарь (ближайшие 6 недель)</h2>
+              <table>
+                <thead><tr><th>Неделя</th><th>Поступления</th><th>Выплаты</th><th>Баланс</th><th>Статус</th></tr></thead>
+                <tbody>
+                  <tr><td>11-17 марта</td><td>6.2M ₽</td><td>5.1M ₽</td><td>+1.1M ₽</td><td><span class="status ok">ОК</span></td></tr>
+                  <tr><td>18-24 марта</td><td>4.1M ₽</td><td>5.8M ₽</td><td>-1.7M ₽</td><td><span class="status risk">Риск</span></td></tr>
+                  <tr><td>25-31 марта</td><td>5.5M ₽</td><td>5.2M ₽</td><td>+0.3M ₽</td><td><span class="status ok">ОК</span></td></tr>
+                  <tr><td>1-7 апреля</td><td>3.6M ₽</td><td>6.8M ₽</td><td>-3.2M ₽</td><td><span class="status bad">Разрыв</span></td></tr>
+                </tbody>
+              </table>
+            </article>
+            <article class="panel stack">
+              <div class="alert bad">С 1 по 7 апреля прогнозируется кассовый разрыв 3.2M ₽.</div>
+              <div class="mini">
+                <strong>Рекомендация AI</strong>
+                Сдвинуть оплату по поставщику «Логистик Плюс» на 10 дней и ускорить инкассацию по 2 ключевым контрактам.
+              </div>
+              <button class="btn ghost" data-route="clients">Открыть дебиторку</button>
+              <button class="btn primary" data-action="tbd:Согласование графика платежей">Согласовать график</button>
+            </article>
+          </div>
+        `
+      },
+
+      scenarios: {
+        title: 'Сценарное моделирование',
+        subtitle: 'What-if анализ: влияние изменений цены, издержек и спроса на NPV и денежный поток',
+        kpis: [
+          { label: 'Активный сценарий', value: state.scenario, delta: 'редактируемый', tone: 'good' },
+          { label: 'NPV (7 лет)', value: '+13.2M ₽', delta: 'базовый', tone: 'good' },
+          { label: 'IRR', value: '22.4%', delta: 'выше WACC', tone: 'good' },
+          { label: 'Окупаемость', value: '5.4 года', delta: 'консервативно', tone: 'warn' },
+          { label: 'Чувствительность', value: 'Высокая', delta: 'к цене сырья', tone: 'bad' }
+        ],
+        actions: [
+          { label: 'Сохранить сценарий', type: 'ghost', action: 'saveScenario' },
+          { label: 'Применить в план', type: 'primary', action: 'applyScenario' }
+        ],
+        content: `
+          <div class="content-grid">
+            <article class="panel stack">
+              <h2>Параметры сценария</h2>
+              <table>
+                <thead><tr><th>Параметр</th><th>Текущее</th><th>Сценарий</th><th>Действие</th></tr></thead>
+                <tbody>
+                  <tr><td>Рост клиентской базы</td><td>+18%/год</td><td>+24%/год</td><td><button class="btn ghost" data-action="tbd:Редактор клиентского роста">Изменить</button></td></tr>
+                  <tr><td>Себестоимость</td><td>100%</td><td>93%</td><td><button class="btn ghost" data-action="tbd:Редактор себестоимости">Изменить</button></td></tr>
+                  <tr><td>Средний чек</td><td>70k ₽/мес</td><td>74k ₽/мес</td><td><button class="btn ghost" data-action="tbd:Редактор тарифа">Изменить</button></td></tr>
+                  <tr><td>Churn</td><td>4.2%</td><td>3.6%</td><td><button class="btn ghost" data-action="tbd:Редактор оттока">Изменить</button></td></tr>
+                </tbody>
+              </table>
+            </article>
+            <article class="panel stack">
+              <h2>Сравнение сценариев</h2>
+              <div class="mini"><strong>Консервативный</strong> NPV: -2.3M ₽ · IRR: 16.1% · Окупаемость: 6.2 года</div>
+              <div class="mini"><strong>Базовый</strong> NPV: +13.2M ₽ · IRR: 22.4% · Окупаемость: 5.4 года</div>
+              <div class="mini"><strong>Оптимистичный</strong> NPV: +26.8M ₽ · IRR: 34.1% · Окупаемость: 3.8 года</div>
+              <button class="btn ghost" data-action="switchScenario">Переключить сценарий</button>
+            </article>
+          </div>
+        `
+      },
+
+      clients: {
+        title: 'Клиенты и контракты',
+        subtitle: 'Контроль дебиторки, маржинальности и рисков по каждому контракту',
+        kpis: [
+          { label: 'Активные клиенты', value: '84', delta: '+6 за квартал', tone: 'good' },
+          { label: 'Дебиторка', value: '12.9M ₽', delta: '+1.2M ₽', tone: 'warn' },
+          { label: 'Просрочка > 30д', value: '2.4M ₽', delta: 'критично', tone: 'bad' },
+          { label: 'Средняя маржа', value: '29.8%', delta: 'по клиентам', tone: 'good' },
+          { label: 'Риск-клиенты', value: '7', delta: 'под мониторингом', tone: 'warn' }
+        ],
+        actions: [
+          { label: 'Новая сделка', type: 'ghost', action: 'tbd:Форма новой сделки' },
+          { label: 'AI-приоритизация', type: 'primary', action: 'tbd:AI-приоритизация клиентов' }
+        ],
+        content: `
+          <div class="content-grid">
+            <article class="panel">
+              <h2>Реестр клиентов</h2>
+              <table>
+                <thead><tr><th>Клиент</th><th>Контракт</th><th>Маржа</th><th>Дебиторка</th><th>Статус</th></tr></thead>
+                <tbody>
+                  <tr><td>ПромЛайн</td><td>4.8M ₽</td><td>33.2%</td><td>0.3M ₽</td><td><span class="status ok">ОК</span></td></tr>
+                  <tr><td>СеверМет</td><td>3.1M ₽</td><td>19.7%</td><td>1.2M ₽</td><td><span class="status risk">Риск</span></td></tr>
+                  <tr><td>ТехноСоюз</td><td>2.6M ₽</td><td>28.4%</td><td>0.8M ₽</td><td><span class="status ok">ОК</span></td></tr>
+                  <tr><td>ПромИнвест</td><td>1.9M ₽</td><td>17.9%</td><td>1.4M ₽</td><td><span class="status bad">Критично</span></td></tr>
+                </tbody>
+              </table>
+            </article>
+            <article class="panel stack">
+              <h2>Действия</h2>
+              <button class="btn ghost" data-action="tbd:Карточка клиента">Открыть карточку клиента</button>
+              <button class="btn ghost" data-action="tbd:Согласование отсрочки">Согласовать отсрочку платежа</button>
+              <button class="btn ghost" data-action="tbd:Пересмотр цены">Запустить пересмотр цены</button>
+              <button class="btn primary" data-route="cashflow">Передать в cash-flow модель</button>
+            </article>
+          </div>
+        `
+      },
+
+      integrations: {
+        title: 'Интеграции и качество данных',
+        subtitle: 'Статус синхронизации 1С/ERP и контроль полноты аналитического слоя',
+        kpis: [
+          { label: 'Источник данных', value: '1С + ERP', delta: 'подключено', tone: 'good' },
+          { label: 'Последняя синхронизация', value: '2 мин назад', delta: 'авто', tone: 'good' },
+          { label: 'Ошибки ETL', value: '3', delta: 'за 24ч', tone: 'warn' },
+          { label: 'Покрытие данных', value: '92%', delta: 'по метрикам', tone: 'good' },
+          { label: 'Статус API', value: 'Degraded', delta: 'нужен мониторинг', tone: 'bad' }
+        ],
+        actions: [
+          { label: 'Лог синхронизации', type: 'ghost', action: 'tbd:Журнал синхронизации' },
+          { label: 'Перезапустить пайплайн', type: 'primary', action: 'tbd:Перезапуск ETL' }
+        ],
+        content: `
+          <div class="content-grid">
+            <article class="panel">
+              <h2>Коннекторы</h2>
+              <table>
+                <thead><tr><th>Источник</th><th>Статус</th><th>Latency</th><th>Ошибки</th><th>Действие</th></tr></thead>
+                <tbody>
+                  <tr><td>1С Управление</td><td><span class="status ok">ONLINE</span></td><td>120ms</td><td>0</td><td><button class="btn ghost" data-action="tbd:Профиль коннектора 1С">Открыть</button></td></tr>
+                  <tr><td>ERP склад</td><td><span class="status risk">DEGRADED</span></td><td>860ms</td><td>2</td><td><button class="btn ghost" data-action="tbd:Профиль коннектора ERP">Открыть</button></td></tr>
+                  <tr><td>CRM продажи</td><td><span class="status ok">ONLINE</span></td><td>230ms</td><td>1</td><td><button class="btn ghost" data-action="tbd:Профиль коннектора CRM">Открыть</button></td></tr>
+                </tbody>
+              </table>
+            </article>
+            <article class="panel tbd">
+              <div class="tbd-box">
+                <h2>ETL Ops Center — TBD</h2>
+                <p>Детальная операционная панель ETL и мониторинга будет расширена в следующей итерации.</p>
+                <button class="btn primary" data-route="dashboard">Вернуться в дашборд</button>
+              </div>
+            </article>
+          </div>
+        `
+      },
+
+      settings: {
+        title: 'Настройки платформы',
+        subtitle: 'Управление ролями, политиками доступа и правилами алертов',
+        kpis: [
+          { label: 'Пользователи', value: '24', delta: 'активных', tone: 'good' },
+          { label: 'Роли', value: '5', delta: 'RBAC', tone: 'good' },
+          { label: 'MFA покрытие', value: '83%', delta: 'нужно 100%', tone: 'warn' },
+          { label: 'Политики алертов', value: '12', delta: 'активных', tone: 'good' },
+          { label: 'Audit события', value: '174', delta: 'за 7 дней', tone: 'warn' }
+        ],
+        actions: [
+          { label: 'Роли и доступы', type: 'ghost', action: 'tbd:RBAC управление' },
+          { label: 'Security Center', type: 'primary', action: 'tbd:Security Center' }
+        ],
+        content: `
+          <div class="panel tbd">
+            <div class="tbd-box">
+              <h2>Settings Console — TBD</h2>
+              <p>Раздел настроек зафиксирован в прототипе. Детальная проработка формы прав, webhook-алертов и security-политик запланирована следующей задачей.</p>
+              <div style="display:flex; gap:8px; justify-content:center; flex-wrap:wrap;">
+                <button class="btn ghost" data-route="integrations">Открыть интеграции</button>
+                <button class="btn primary" data-route="dashboard">В дашборд</button>
+              </div>
+            </div>
+          </div>
+        `
+      }
+    };
+
+    const els = {
+      appRoot: document.getElementById('appRoot'),
+      authScreen: document.getElementById('authScreen'),
+      title: document.getElementById('pageTitle'),
+      subtitle: document.getElementById('pageSubtitle'),
+      filters: document.getElementById('filters'),
+      kpiBar: document.getElementById('kpiBar'),
+      content: document.getElementById('content'),
+      topActions: document.getElementById('topActions'),
+      crumb: document.getElementById('crumb'),
+      toast: document.getElementById('toast'),
+      teamName: document.getElementById('teamName'),
+      teamMeta: document.getElementById('teamMeta'),
+      modalBackdrop: document.getElementById('modalBackdrop'),
+      modalTitle: document.getElementById('modalTitle'),
+      modalBody: document.getElementById('modalBody'),
+      modalActions: document.getElementById('modalActions')
+    };
+
+    function showToast(message) {
+      els.toast.textContent = message;
+      els.toast.classList.add('show');
+      clearTimeout(showToast._t);
+      showToast._t = setTimeout(() => els.toast.classList.remove('show'), 1800);
+    }
+
+    function openModal(title, body, actions = [{ label: 'Закрыть', type: 'ghost', action: 'closeModal' }]) {
+      els.modalTitle.textContent = title;
+      els.modalBody.textContent = body;
+      els.modalActions.innerHTML = actions.map((a) => (
+        `<button class="btn ${a.type || 'ghost'}" data-action="${a.action}">${a.label}</button>`
+      )).join('');
+      els.modalBackdrop.classList.remove('hidden');
+    }
+
+    function closeModal() {
+      els.modalBackdrop.classList.add('hidden');
+      els.modalActions.innerHTML = '';
+    }
+
+    function renderFilters() {
+      els.filters.innerHTML = `
+        <div class="chips">
+          <button class="chip ${state.period === 'march_2026' ? 'active' : ''}" data-action="setPeriod:march_2026">Март 2026</button>
+          <button class="chip ${state.period === 'q1_2026' ? 'active' : ''}" data-action="setPeriod:q1_2026">Q1 2026</button>
+          <button class="chip ${state.period === 'ytd_2026' ? 'active' : ''}" data-action="setPeriod:ytd_2026">YTD 2026</button>
+          <button class="chip secondary" data-action="setEntity">Юрлицо: ${state.legalEntity}</button>
+        </div>
+        <div class="chips">
+          <button class="chip secondary" data-route="dashboard">Общий обзор</button>
+          <button class="chip secondary" data-route="scenarios">What-if</button>
+          <button class="chip secondary" data-route="clients">Клиентский риск</button>
+        </div>
+      `;
+    }
+
+    function openTbd(feature) {
+      state.tbdFeature = feature || 'Функция';
+      state.route = 'tbd';
+      render();
+    }
+
+    function authenticate(role, userName) {
+      state.authenticated = true;
+      state.userRole = role;
+      state.userName = userName;
+      state.route = 'dashboard';
+      state.tbdFeature = '';
+
+      els.teamName.textContent = state.legalEntity;
+      els.teamMeta.textContent = `${userName} · ${role}`;
+
+      els.authScreen.classList.add('hidden');
+      els.appRoot.classList.remove('hidden');
+      render();
+      showToast(`Вход выполнен: ${role}`);
+    }
+
+    function logout() {
+      state.authenticated = false;
+      state.userRole = '';
+      state.userName = '';
+      closeModal();
+      els.appRoot.classList.add('hidden');
+      els.authScreen.classList.remove('hidden');
+      showToast('Сессия демо завершена');
+    }
+
+    function renderTopActions(actions) {
+      els.topActions.innerHTML = actions.map(a => {
+        let label = a.label;
+        if (a.action === 'switchScenario') {
+          label = `Сценарий: ${state.scenario}`;
+        }
+        if (a.action === 'runAi' && state.aiRunning) {
+          label = 'AI-анализ выполняется...';
+        }
+        return `<button class="btn ${a.type}" data-action="${a.action}">${label}</button>`;
+      }).join('');
+    }
+
+    function renderKpis(kpis) {
+      els.kpiBar.innerHTML = kpis.map(k => `
+        <article class="kpi-card">
+          <div class="label">${k.label}</div>
+          <div class="value">${k.value}</div>
+          <span class="delta ${k.tone}">${k.delta}</span>
+        </article>
+      `).join('');
+    }
+
+    function tbdView() {
+      return {
+        title: `${state.tbdFeature} (TBD)`,
+        subtitle: 'Экран подключен в кликабельный прототип. Контент будет проработан в следующей итерации.',
+        kpis: [
+          { label: 'Статус экрана', value: 'TBD', delta: 'доступен в навигации', tone: 'warn' },
+          { label: 'Приоритет', value: 'High', delta: 'для демо-трека', tone: 'good' },
+          { label: 'Готовность UI', value: '35%', delta: 'каркас', tone: 'warn' },
+          { label: 'Сценарий', value: 'Кликабельный', delta: 'для demo', tone: 'good' },
+          { label: 'Следующий шаг', value: 'Detail UX', delta: 'в backlog', tone: 'warn' }
+        ],
+        actions: [
+          { label: 'Назад', type: 'ghost', action: 'backToDashboard' },
+          { label: 'В roadmap', type: 'primary', action: 'tbd:Roadmap детализация' }
+        ],
+        content: `
+          <div class="panel tbd">
+            <div class="tbd-box">
+              <h2>${state.tbdFeature} — TBD</h2>
+              <p>Раздел доступен для клика и включен в демонстрационный пользовательский поток. Для релизной версии нужно добавить детальные формы, валидации и API-связки.</p>
+              <div style="display:flex; gap:8px; justify-content:center; flex-wrap:wrap;">
+                <button class="btn ghost" data-route="dashboard">Вернуться в дашборд</button>
+                <button class="btn primary" data-route="scenarios">Открыть сценарии</button>
+              </div>
+            </div>
+          </div>
+        `
+      };
+    }
+
+    function getView() {
+      if (state.route === 'tbd') return tbdView();
+      return routes[state.route] || routes.dashboard;
+    }
+
+    function render() {
+      if (!state.authenticated) return;
+
+      const view = getView();
+      const kpis = view.kpis.map((k) => ({ ...k }));
+      if (state.route === 'scenarios' && kpis[0]) {
+        kpis[0].value = state.scenario;
+      }
+
+      const periodSuffix = ` · Период: ${periodLabels[state.period]}`;
+      els.title.textContent = view.title;
+      els.subtitle.textContent = `${view.subtitle}${periodSuffix}`;
+      els.crumb.textContent = `Раздел / ${routeNames[state.route] || routeNames.tbd}`;
+      renderTopActions(view.actions);
+      renderFilters();
+      renderKpis(kpis);
+      els.content.innerHTML = view.content;
+
+      document.querySelectorAll('.nav-item').forEach(btn => {
+        const isActive = btn.dataset.route === state.route;
+        btn.classList.toggle('active', isActive);
+      });
+    }
+
+    function toggleScenario() {
+      state.scenario = state.scenario === 'Базовый' ? 'Оптимистичный' : state.scenario === 'Оптимистичный' ? 'Консервативный' : 'Базовый';
+      showToast(`Сценарий переключен: ${state.scenario}`);
+      if (state.route === 'dashboard' || state.route === 'scenarios') render();
+    }
+
+    document.addEventListener('click', (e) => {
+      if (e.target.closest('#modalBackdrop') && !e.target.closest('.modal')) {
+        closeModal();
+        return;
+      }
+
+      const routeTarget = e.target.closest('[data-route]');
+      if (routeTarget) {
+        state.route = routeTarget.dataset.route;
+        render();
+        return;
+      }
+
+      const actionTarget = e.target.closest('[data-action]');
+      if (actionTarget) {
+        const action = actionTarget.dataset.action;
+
+        if (action.startsWith('setPeriod:')) {
+          state.period = action.split(':')[1];
+          showToast(`Период переключен: ${periodLabels[state.period]}`);
+          render();
+          return;
+        }
+
+        if (action.startsWith('tbd:')) {
+          openTbd(action.replace('tbd:', ''));
+          closeModal();
+          return;
+        }
+
+        switch (action) {
+          case 'closeModal':
+            closeModal();
+            break;
+          case 'loginDemoCfo':
+            authenticate('CFO', 'Анна Соколова');
+            break;
+          case 'loginDemoCeo':
+            authenticate('CEO', 'Михаил Горин');
+            break;
+          case 'loginDemoAnalyst':
+            authenticate('Аналитик', 'Дарья Ким');
+            break;
+          case 'logout':
+            logout();
+            break;
+          case 'runAi':
+            state.aiRunning = true;
+            render();
+            showToast('AI-анализ запущен. Пересчёт метрик...');
+            setTimeout(() => {
+              state.aiRunning = false;
+              render();
+              showToast('AI-анализ завершен. Данные обновлены.');
+            }, 1600);
+            break;
+          case 'switchScenario':
+            toggleScenario();
+            break;
+          case 'applyScenario':
+            openModal(
+              'Применить сценарий',
+              `Сценарий «${state.scenario}» будет применен в оперативный план.`,
+              [
+                { label: 'Отмена', type: 'ghost', action: 'closeModal' },
+                { label: 'Применить', type: 'primary', action: 'confirmApplyScenario' }
+              ]
+            );
+            break;
+          case 'confirmApplyScenario':
+            closeModal();
+            showToast(`Сценарий «${state.scenario}» применен в план.`);
+            break;
+          case 'saveScenario':
+            openModal(
+              'Сохранить сценарий',
+              `Сценарий «${state.scenario}» сохранится в библиотеке модели.`,
+              [
+                { label: 'Отмена', type: 'ghost', action: 'closeModal' },
+                { label: 'Сохранить', type: 'primary', action: 'confirmSaveScenario' }
+              ]
+            );
+            break;
+          case 'confirmSaveScenario':
+            closeModal();
+            showToast('Сценарий сохранен в библиотеку.');
+            break;
+          case 'setEntity':
+            state.legalEntity = state.legalEntity === 'ООО «ПромТех Север»'
+              ? 'АО «СтанкоПром Центр»'
+              : 'ООО «ПромТех Север»';
+            els.teamName.textContent = state.legalEntity;
+            showToast(`Выбрано юрлицо: ${state.legalEntity}`);
+            render();
+            break;
+          case 'sync1c':
+            showToast('Синхронизация с 1С запущена.');
+            break;
+          case 'openCostPlan':
+            openTbd('План снижения себестоимости');
+            break;
+          case 'openConservative':
+            state.scenario = 'Консервативный';
+            showToast('Включен консервативный прогноз.');
+            render();
+            break;
+          case 'openOptimistic':
+            state.scenario = 'Оптимистичный';
+            showToast('Включен оптимистичный прогноз.');
+            render();
+            break;
+          case 'backToDashboard':
+            state.route = 'dashboard';
+            render();
+            break;
+          default:
+            showToast('Действие обработано в демо-режиме.');
+        }
+        return;
+      }
+
+      const rowTarget = e.target.closest('tbody tr');
+      if (rowTarget) {
+        const cells = Array.from(rowTarget.children).map((td) => td.textContent.trim()).filter(Boolean);
+        if (cells.length > 1) {
+          openModal(
+            `Карточка: ${cells[0]}`,
+            `Демо-детализация записи: ${cells.slice(1).join(' · ')}`,
+            [
+              { label: 'Закрыть', type: 'ghost', action: 'closeModal' },
+              { label: 'Открыть как TBD', type: 'primary', action: `tbd:Карточка ${cells[0]}` }
+            ]
+          );
+        }
+      }
+    });
+
+    document.addEventListener('keydown', (e) => {
+      if (e.key === 'Escape') closeModal();
+    });
+  </script>
+</body>
+</html>
