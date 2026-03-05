@@ -1,0 +1,501 @@
+<!doctype html>
+<html lang="ru">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Business Navigator AI — Onepager</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@500;700&family=IBM+Plex+Sans:wght@400;500;600&display=swap" rel="stylesheet">
+  <style>
+    :root {
+      --bg: #f5f2ed;
+      --ink: #152738;
+      --muted: #5a6f81;
+      --surface: #ffffff;
+      --line: #d7ddd2;
+      --brand: #0f7a5f;
+      --brand-soft: #e8f5f0;
+      --accent: #d66a2c;
+      --accent-soft: #fff1e8;
+      --deep: #102434;
+      --radius: 18px;
+      --shadow: 0 18px 44px rgba(13, 30, 42, 0.1);
+    }
+
+    * { box-sizing: border-box; }
+
+    html { scroll-behavior: smooth; }
+
+    body {
+      margin: 0;
+      font-family: "IBM Plex Sans", "Segoe UI", Arial, sans-serif;
+      color: var(--ink);
+      background:
+        radial-gradient(circle at 8% 4%, #ffffff 0%, transparent 38%),
+        radial-gradient(circle at 95% 12%, #faede3 0%, transparent 26%),
+        var(--bg);
+      line-height: 1.45;
+    }
+
+    .wrap {
+      width: min(1140px, calc(100% - 44px));
+      margin: 0 auto;
+    }
+
+    .topbar {
+      position: sticky;
+      top: 0;
+      z-index: 20;
+      backdrop-filter: blur(8px);
+      background: rgba(245, 242, 237, 0.9);
+      border-bottom: 1px solid rgba(215, 221, 210, 0.9);
+    }
+
+    .nav {
+      min-height: 66px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 12px;
+    }
+
+    .logo {
+      font-family: "Space Grotesk", "Segoe UI", sans-serif;
+      font-weight: 700;
+      letter-spacing: -0.02em;
+      font-size: 20px;
+    }
+
+    .nav-links {
+      display: flex;
+      gap: 8px;
+      flex-wrap: wrap;
+      justify-content: flex-end;
+    }
+
+    .nav-links a {
+      text-decoration: none;
+      color: #31495b;
+      font-size: 13px;
+      font-weight: 600;
+      border: 1px solid #d7ddd2;
+      border-radius: 999px;
+      padding: 7px 11px;
+      background: #fffefc;
+    }
+
+    .hero {
+      padding: 44px 0 34px;
+      display: grid;
+      grid-template-columns: 1.35fr 1fr;
+      gap: 16px;
+      align-items: stretch;
+    }
+
+    .hero-main,
+    .hero-side {
+      background: var(--surface);
+      border: 1px solid var(--line);
+      border-radius: var(--radius);
+      box-shadow: var(--shadow);
+      padding: 24px;
+    }
+
+    .pill {
+      display: inline-flex;
+      align-items: center;
+      gap: 7px;
+      border: 1px solid #bed7cb;
+      background: var(--brand-soft);
+      color: #145e49;
+      border-radius: 999px;
+      padding: 7px 12px;
+      font-size: 13px;
+      font-weight: 600;
+      margin-bottom: 14px;
+    }
+
+    h1, h2, h3 {
+      margin: 0;
+      font-family: "Space Grotesk", "Segoe UI", sans-serif;
+      letter-spacing: -0.03em;
+      line-height: 1.05;
+    }
+
+    h1 {
+      font-size: clamp(34px, 5.2vw, 64px);
+      margin-bottom: 12px;
+    }
+
+    h2 {
+      font-size: clamp(27px, 3.4vw, 42px);
+      margin-bottom: 13px;
+    }
+
+    p {
+      margin: 0;
+      color: var(--muted);
+      font-size: 17px;
+    }
+
+    .hero-sub {
+      min-height: 73px;
+    }
+
+    .cta {
+      margin-top: 18px;
+      display: flex;
+      gap: 9px;
+      flex-wrap: wrap;
+    }
+
+    .btn {
+      border-radius: 12px;
+      padding: 11px 14px;
+      font-size: 14px;
+      font-weight: 700;
+      border: 1px solid transparent;
+      cursor: pointer;
+      text-decoration: none;
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      transition: .18s ease;
+    }
+
+    .btn.primary {
+      background: var(--brand);
+      border-color: #10664f;
+      color: #fff;
+    }
+
+    .btn.secondary {
+      background: #f4f8fb;
+      border-color: #cfdae4;
+      color: #21374a;
+    }
+
+    .btn.ghost {
+      background: #fff8f3;
+      border-color: #f0d2bf;
+      color: #8f4b24;
+    }
+
+    .btn:hover {
+      transform: translateY(-1px);
+    }
+
+    .tone-panel {
+      margin-top: 14px;
+      border-top: 1px dashed #d7ddd2;
+      padding-top: 12px;
+      display: flex;
+      gap: 8px;
+      align-items: center;
+      justify-content: space-between;
+      flex-wrap: wrap;
+    }
+
+    .tone-label {
+      font-size: 13px;
+      color: #5d7488;
+      font-weight: 600;
+    }
+
+    .stats {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 9px;
+      margin-bottom: 12px;
+    }
+
+    .stat {
+      border: 1px solid #dce4eb;
+      border-radius: 13px;
+      background: #fbfdff;
+      padding: 12px;
+    }
+
+    .stat b {
+      display: block;
+      font-size: 25px;
+      font-family: "Space Grotesk", "Segoe UI", sans-serif;
+      margin-bottom: 2px;
+      color: #163149;
+    }
+
+    .stat span {
+      color: #597084;
+      font-size: 13px;
+    }
+
+    .mini-note {
+      border: 1px solid #f0d2bf;
+      background: var(--accent-soft);
+      border-radius: 12px;
+      padding: 12px;
+      color: #7e4a2c;
+      font-size: 13px;
+      font-weight: 600;
+    }
+
+    section.block {
+      margin-bottom: 14px;
+      background: var(--surface);
+      border: 1px solid var(--line);
+      border-radius: var(--radius);
+      box-shadow: var(--shadow);
+      padding: 22px;
+    }
+
+    .grid-3 {
+      display: grid;
+      grid-template-columns: repeat(3, minmax(0, 1fr));
+      gap: 10px;
+      margin-top: 12px;
+    }
+
+    .grid-2 {
+      display: grid;
+      grid-template-columns: repeat(2, minmax(0, 1fr));
+      gap: 10px;
+      margin-top: 12px;
+    }
+
+    .card {
+      border: 1px solid #d9e1e8;
+      border-radius: 14px;
+      background: #fcfeff;
+      padding: 14px;
+      transition: transform .18s ease, box-shadow .18s ease;
+      transform-style: preserve-3d;
+    }
+
+    .card:hover {
+      transform: perspective(700px) rotateX(2deg) rotateY(-3deg) translateY(-2px);
+      box-shadow: 0 12px 22px rgba(14, 35, 49, 0.12);
+    }
+
+    .card h3 {
+      font-size: 20px;
+      margin-bottom: 7px;
+    }
+
+    .card p {
+      font-size: 14px;
+    }
+
+    .badge {
+      font-size: 12px;
+      font-weight: 700;
+      color: #174464;
+      border: 1px solid #c4d7e6;
+      background: #edf5fb;
+      border-radius: 999px;
+      padding: 4px 9px;
+      display: inline-block;
+      margin-bottom: 7px;
+    }
+
+    .cta-wide {
+      background: linear-gradient(132deg, #132a3b 0%, #0f2331 60%, #1f3b4d 100%);
+      color: #e8f3fb;
+      border: 1px solid #263e4f;
+    }
+
+    .cta-wide p {
+      color: #b8cbda;
+    }
+
+    .cta-row {
+      margin-top: 12px;
+      display: flex;
+      gap: 9px;
+      flex-wrap: wrap;
+    }
+
+    footer {
+      text-align: center;
+      color: #607589;
+      font-size: 13px;
+      padding: 20px 0 34px;
+    }
+
+    @media (max-width: 980px) {
+      .hero { grid-template-columns: 1fr; }
+      .grid-3, .grid-2 { grid-template-columns: 1fr; }
+      .nav { padding: 8px 0; }
+    }
+  </style>
+</head>
+<body>
+  <div class="topbar">
+    <div class="wrap nav">
+      <div class="logo">Business Navigator AI</div>
+      <div class="nav-links">
+        <a href="#problem">Проблема</a>
+        <a href="#solution">Решение</a>
+        <a href="#economics">Экономика</a>
+        <a href="/business-navigator-product-prototype.html">Прототип</a>
+      </div>
+    </div>
+  </div>
+
+  <main class="wrap">
+    <section class="hero" id="top">
+      <article class="hero-main">
+        <span class="pill" id="modeBadge">Режим: Startup Pitch</span>
+        <h1 id="heroTitle">Диплом, который вырос в B2B SaaS</h1>
+        <p class="hero-sub" id="heroSubtitle">Business Navigator AI автоматизирует управленческую аналитику производственных МСБ: от данных 1С до сценариев решения для собственника и CFO.</p>
+        <div class="cta">
+          <a class="btn primary" href="/business-navigator-product-prototype.html">Открыть кликабельный прототип</a>
+          <a class="btn secondary" href="https://drive.google.com/drive/folders/1lzEcumXQaCSD7CSxPSjmQF_kiBWJ9G1Z" target="_blank" rel="noopener noreferrer">Документы диплома</a>
+          <a class="btn ghost" href="https://github.com/glebschemelev-cpu/ai_accountant" target="_blank" rel="noopener noreferrer">GitHub</a>
+        </div>
+        <div class="tone-panel">
+          <span class="tone-label">Немного похулиганить:</span>
+          <button class="btn secondary" id="modeSwitch">Сменить подачу</button>
+        </div>
+      </article>
+
+      <aside class="hero-side">
+        <div class="stats">
+          <div class="stat"><b>8.4 млрд ₽</b><span>TAM рынка в год</span></div>
+          <div class="stat"><b>3.36 млрд ₽</b><span>SAM в целевом сегменте</span></div>
+          <div class="stat"><b>70 000 ₽</b><span>Средний SaaS-тариф / месяц</span></div>
+          <div class="stat"><b>5-6 лет</b><span>Окупаемость, консервативно</span></div>
+        </div>
+        <div class="mini-note">Да, это академическая работа. И да, это уже продуктовый каркас с реальным demo flow.</div>
+      </aside>
+    </section>
+
+    <section class="block" id="problem">
+      <h2>Проблема, которая стоит денег</h2>
+      <p>Производственные МСБ уже автоматизировали учет, но не управленческую логику. Данные есть, решения нет.</p>
+      <div class="grid-3">
+        <article class="card">
+          <span class="badge">Себестоимость</span>
+          <h3>Непрозрачные затраты</h3>
+          <p>Рост расходов обнаруживается поздно, когда маржа уже просела.</p>
+        </article>
+        <article class="card">
+          <span class="badge">Cash-flow</span>
+          <h3>Реактивное управление</h3>
+          <p>Кассовые разрывы прогнозируются вручную и слишком поздно.</p>
+        </article>
+        <article class="card">
+          <span class="badge">Маржа</span>
+          <h3>Потери на SKU и клиентах</h3>
+          <p>Низкомаржинальные направления не выявляются в ежедневном цикле.</p>
+        </article>
+      </div>
+    </section>
+
+    <section class="block" id="solution">
+      <h2>Решение: управленческая аналитика + AI</h2>
+      <p>Платформа объединяет данные, прогнозы и действия в одном рабочем контуре.</p>
+      <div class="grid-2">
+        <article class="card">
+          <span class="badge">Модуль 1</span>
+          <h3>Операционная панель CFO</h3>
+          <p>Выручка, маржа, себестоимость, риск-разрывы и приоритизированные алерты.</p>
+        </article>
+        <article class="card">
+          <span class="badge">Модуль 2</span>
+          <h3>Сценарное моделирование</h3>
+          <p>What-if анализ для цены, издержек, роста клиентской базы и эффекта на NPV/IRR.</p>
+        </article>
+        <article class="card">
+          <span class="badge">Модуль 3</span>
+          <h3>AI-рекомендации</h3>
+          <p>Конкретные действия: где снижать затраты, где перенастраивать платежи и цены.</p>
+        </article>
+        <article class="card">
+          <span class="badge">Модуль 4</span>
+          <h3>Action Hub</h3>
+          <p>Демоконтур выполнения задач: от обнаружения проблемы до фиксации результата.</p>
+        </article>
+      </div>
+    </section>
+
+    <section class="block" id="economics">
+      <h2>Почему это сильный диплом и рабочий стартап</h2>
+      <div class="grid-2">
+        <article class="card">
+          <span class="badge">Дипломная ценность</span>
+          <h3>Методология и обоснование</h3>
+          <p>TAM/SAM/SOM, SWOT, финансовая модель, NPV/IRR и сценарный анализ. Есть академическая глубина и структурная проверяемость.</p>
+        </article>
+        <article class="card">
+          <span class="badge">Стартап-ценность</span>
+          <h3>Продуктовый контур</h3>
+          <p>Есть кликабельный прототип, модульная архитектура, рыночная гипотеза и понятная логика пилота на данных клиента.</p>
+        </article>
+      </div>
+      <div class="grid-3" style="margin-top:10px">
+        <article class="card">
+          <h3>Go-To-Market</h3>
+          <p>Пилот 30 дней, измеримый эффект по себестоимости и cash-flow, затем расширение лицензии.</p>
+        </article>
+        <article class="card">
+          <h3>Монетизация</h3>
+          <p>SaaS-подписка 70k ₽/мес + опциональные сервисы внедрения.</p>
+        </article>
+        <article class="card">
+          <h3>Следующий шаг</h3>
+          <p>Доработка module depth, интеграции с реальными данными и первые пилотные клиенты.</p>
+        </article>
+      </div>
+    </section>
+
+    <section class="block cta-wide">
+      <h2>Открыть проект и проверить логику руками</h2>
+      <p>Лучший аргумент за продукт: пройти demo flow от входа до action-hub и увидеть, как принимаются управленческие решения.</p>
+      <div class="cta-row">
+        <a class="btn primary" href="/business-navigator-product-prototype.html">Перейти в прототип</a>
+        <a class="btn secondary" href="https://drive.google.com/drive/folders/1lzEcumXQaCSD7CSxPSjmQF_kiBWJ9G1Z" target="_blank" rel="noopener noreferrer">Открыть документы диплома</a>
+        <a class="btn ghost" href="/">На главную</a>
+      </div>
+    </section>
+  </main>
+
+  <footer>
+    Business Navigator AI · Onepager · 2026
+  </footer>
+
+  <script>
+    const modes = [
+      {
+        badge: 'Режим: Startup Pitch',
+        title: 'Диплом, который вырос в B2B SaaS',
+        sub: 'Business Navigator AI автоматизирует управленческую аналитику производственных МСБ: от данных 1С до сценариев решения для собственника и CFO.'
+      },
+      {
+        badge: 'Режим: Академический',
+        title: 'Практико-ориентированная дипломная работа',
+        sub: 'Проект сочетает методологию исследования, рыночное обоснование, финансовую модель и проверяемый цифровой прототип.'
+      },
+      {
+        badge: 'Режим: Демо на встрече',
+        title: 'Не слайды, а рабочий сценарий',
+        sub: 'Показываем экран, кликаем, меняем период и сценарий, фиксируем управленческие действия через Action Hub.'
+      }
+    ];
+
+    let modeIndex = 0;
+    const badge = document.getElementById('modeBadge');
+    const title = document.getElementById('heroTitle');
+    const sub = document.getElementById('heroSubtitle');
+    const switcher = document.getElementById('modeSwitch');
+
+    switcher.addEventListener('click', () => {
+      modeIndex = (modeIndex + 1) % modes.length;
+      const m = modes[modeIndex];
+      badge.textContent = m.badge;
+      title.textContent = m.title;
+      sub.textContent = m.sub;
+    });
+  </script>
+</body>
+</html>
