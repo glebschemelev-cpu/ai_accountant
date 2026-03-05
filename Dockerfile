@@ -4,6 +4,7 @@ WORKDIR /app
 
 COPY index.html /app/index.html
 COPY business-navigator-product-prototype.html /app/business-navigator-product-prototype.html
+COPY startup-onepager.html /app/startup-onepager.html
 COPY google-drive-ready /app/google-drive-ready
 
 EXPOSE 8080
