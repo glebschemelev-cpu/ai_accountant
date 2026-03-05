@@ -651,6 +651,39 @@
       line-height: 1.45;
     }
 
+    .task-list {
+      display: grid;
+      gap: 8px;
+      margin-top: 8px;
+    }
+
+    .task-item {
+      border: 1px solid #dbe5ee;
+      border-radius: 10px;
+      padding: 10px;
+      background: #f9fcff;
+      display: grid;
+      gap: 6px;
+    }
+
+    .task-item h4 {
+      margin: 0;
+      font-size: 14px;
+      font-weight: 700;
+      color: #1b3248;
+    }
+
+    .task-item p {
+      margin: 0;
+      font-size: 12px;
+      color: #60778b;
+    }
+
+    .task-item.done {
+      background: #edf8f2;
+      border-color: #bddfcd;
+    }
+
     .modal-actions {
       display: flex;
       gap: 8px;
@@ -792,7 +825,13 @@
       tbdFeature: '',
       period: 'march_2026',
       legalEntity: 'ООО «ПромТех Север»',
-      aiRunning: false
+      aiRunning: false,
+      actionHub: {
+        negotiate_payments: false,
+        optimize_raw: false,
+        repricing_lowmargin: false,
+        reduce_logistics_urgent: false
+      }
     };
 
     const routeNames = {
@@ -811,6 +850,55 @@
       march_2026: 'Март 2026',
       q1_2026: 'Q1 2026',
       ytd_2026: 'YTD 2026'
+    };
+
+    const STORAGE_KEY = 'bnai_demo_state_v1';
+
+    const dashboardKpiProfiles = {
+      march_2026: [
+        { label: 'Выручка MTD', value: '52.4M ₽', delta: '+8.2%', tone: 'good' },
+        { label: 'Валовая маржа', value: '31.7%', delta: '+1.1 п.п.', tone: 'good' },
+        { label: 'Себестоимость', value: '35.8M ₽', delta: '+4.3%', tone: 'bad' },
+        { label: 'Прогноз cash-flow (90д)', value: '+11.2M ₽', delta: 'Стабильно', tone: 'good' },
+        { label: 'Риск кассового разрыва', value: '18%', delta: 'Нужен контроль', tone: 'warn' }
+      ],
+      q1_2026: [
+        { label: 'Выручка QTD', value: '145.7M ₽', delta: '+9.4%', tone: 'good' },
+        { label: 'Валовая маржа', value: '32.1%', delta: '+1.4 п.п.', tone: 'good' },
+        { label: 'Себестоимость', value: '99.2M ₽', delta: '+2.8%', tone: 'warn' },
+        { label: 'Прогноз cash-flow (90д)', value: '+14.9M ₽', delta: 'Улучшение', tone: 'good' },
+        { label: 'Риск кассового разрыва', value: '14%', delta: 'Снижается', tone: 'good' }
+      ],
+      ytd_2026: [
+        { label: 'Выручка YTD', value: '286.4M ₽', delta: '+11.1%', tone: 'good' },
+        { label: 'Валовая маржа', value: '32.8%', delta: '+2.0 п.п.', tone: 'good' },
+        { label: 'Себестоимость', value: '194.3M ₽', delta: '+1.9%', tone: 'warn' },
+        { label: 'Прогноз cash-flow (90д)', value: '+18.3M ₽', delta: 'Позитивно', tone: 'good' },
+        { label: 'Риск кассового разрыва', value: '10%', delta: 'Контролируемо', tone: 'good' }
+      ]
+    };
+
+    const actionHubCatalog = {
+      negotiate_payments: {
+        title: 'Сдвиг графика выплат по поставщикам',
+        impact: 'Снижение пикового cash-gap до 1.1M ₽',
+        module: 'Cash-flow'
+      },
+      optimize_raw: {
+        title: 'Оптимизация закупок сырья (группа B)',
+        impact: 'Потенциальная экономия 620k ₽ / месяц',
+        module: 'Себестоимость'
+      },
+      repricing_lowmargin: {
+        title: 'Пересмотр цены по низкомаржинальным SKU',
+        impact: 'Рост маржи +1.1 п.п.',
+        module: 'Маржинальность'
+      },
+      reduce_logistics_urgent: {
+        title: 'Снижение доли срочной логистики',
+        impact: 'Снижение логистических расходов на 12%',
+        module: 'Операции'
+      }
     };
 
     const routes = {
@@ -1200,9 +1288,49 @@
       showToast._t = setTimeout(() => els.toast.classList.remove('show'), 1800);
     }
 
+    function saveState() {
+      const snapshot = {
+        authenticated: state.authenticated,
+        userRole: state.userRole,
+        userName: state.userName,
+        route: state.route,
+        scenario: state.scenario,
+        period: state.period,
+        legalEntity: state.legalEntity,
+        actionHub: state.actionHub
+      };
+      try {
+        localStorage.setItem(STORAGE_KEY, JSON.stringify(snapshot));
+      } catch (_) {}
+    }
+
+    function loadState() {
+      try {
+        const raw = localStorage.getItem(STORAGE_KEY);
+        if (!raw) return;
+        const parsed = JSON.parse(raw);
+        if (!parsed || typeof parsed !== 'object') return;
+
+        state.authenticated = Boolean(parsed.authenticated);
+        state.userRole = parsed.userRole || '';
+        state.userName = parsed.userName || '';
+        state.route = routeNames[parsed.route] ? parsed.route : 'dashboard';
+        state.scenario = parsed.scenario || 'Базовый';
+        state.period = periodLabels[parsed.period] ? parsed.period : 'march_2026';
+        state.legalEntity = parsed.legalEntity || 'ООО «ПромТех Север»';
+        if (parsed.actionHub && typeof parsed.actionHub === 'object') {
+          state.actionHub = { ...state.actionHub, ...parsed.actionHub };
+        }
+      } catch (_) {}
+    }
+
     function openModal(title, body, actions = [{ label: 'Закрыть', type: 'ghost', action: 'closeModal' }]) {
       els.modalTitle.textContent = title;
-      els.modalBody.textContent = body;
+      if (typeof body === 'string' && body.includes('<')) {
+        els.modalBody.innerHTML = body;
+      } else {
+        els.modalBody.textContent = body;
+      }
       els.modalActions.innerHTML = actions.map((a) => (
         `<button class="btn ${a.type || 'ghost'}" data-action="${a.action}">${a.label}</button>`
       )).join('');
@@ -1212,9 +1340,69 @@
     function closeModal() {
       els.modalBackdrop.classList.add('hidden');
       els.modalActions.innerHTML = '';
+      els.modalBody.textContent = '';
+    }
+
+    function getActionHubStats() {
+      const total = Object.keys(actionHubCatalog).length;
+      const done = Object.values(state.actionHub).filter(Boolean).length;
+      return { total, done };
+    }
+
+    function openActionHub() {
+      const rows = Object.entries(actionHubCatalog).map(([id, item]) => {
+        const done = Boolean(state.actionHub[id]);
+        return `
+          <div class="task-item ${done ? 'done' : ''}">
+            <h4>${item.title}</h4>
+            <p>${item.impact} · Модуль: ${item.module}</p>
+            <div>
+              <button class="btn ${done ? 'primary' : 'ghost'}" data-action="toggleAction:${id}">
+                ${done ? 'Выполнено' : 'Отметить выполненным'}
+              </button>
+            </div>
+          </div>
+        `;
+      }).join('');
+      const stats = getActionHubStats();
+      openModal(
+        `Action Hub: ${stats.done}/${stats.total}`,
+        `<div class="task-list">${rows}</div>`,
+        [
+          { label: 'Сбросить', type: 'ghost', action: 'resetActionHub' },
+          { label: 'Закрыть', type: 'primary', action: 'closeModal' }
+        ]
+      );
+    }
+
+    function adjustKpis(viewKpis) {
+      if (state.route === 'dashboard') {
+        let kpis = dashboardKpiProfiles[state.period] || dashboardKpiProfiles.march_2026;
+        kpis = kpis.map((k) => ({ ...k }));
+        if (state.scenario === 'Оптимистичный') {
+          kpis[0].delta = '+12.7%';
+          kpis[4].value = '9%';
+          kpis[4].delta = 'Низкий';
+          kpis[4].tone = 'good';
+        }
+        if (state.scenario === 'Консервативный') {
+          kpis[0].delta = '+4.1%';
+          kpis[4].value = '23%';
+          kpis[4].delta = 'Повышенный';
+          kpis[4].tone = 'bad';
+        }
+        if (state.legalEntity.includes('СтанкоПром')) {
+          kpis[2].value = state.period === 'march_2026' ? '34.9M ₽' : kpis[2].value;
+          kpis[2].delta = '+2.1%';
+          kpis[2].tone = 'warn';
+        }
+        return kpis;
+      }
+      return viewKpis.map((k) => ({ ...k }));
     }
 
     function renderFilters() {
+      const hub = getActionHubStats();
       els.filters.innerHTML = `
         <div class="chips">
           <button class="chip ${state.period === 'march_2026' ? 'active' : ''}" data-action="setPeriod:march_2026">Март 2026</button>
@@ -1223,6 +1411,7 @@
           <button class="chip secondary" data-action="setEntity">Юрлицо: ${state.legalEntity}</button>
         </div>
         <div class="chips">
+          <button class="chip secondary" data-action="openActionHub">Action Hub ${hub.done}/${hub.total}</button>
           <button class="chip secondary" data-route="dashboard">Общий обзор</button>
           <button class="chip secondary" data-route="scenarios">What-if</button>
           <button class="chip secondary" data-route="clients">Клиентский риск</button>
@@ -1234,6 +1423,7 @@
       state.tbdFeature = feature || 'Функция';
       state.route = 'tbd';
       render();
+      saveState();
     }
 
     function authenticate(role, userName) {
@@ -1250,6 +1440,7 @@
       els.appRoot.classList.remove('hidden');
       render();
       showToast(`Вход выполнен: ${role}`);
+      saveState();
     }
 
     function logout() {
@@ -1260,6 +1451,7 @@
       els.appRoot.classList.add('hidden');
       els.authScreen.classList.remove('hidden');
       showToast('Сессия демо завершена');
+      saveState();
     }
 
     function renderTopActions(actions) {
@@ -1324,7 +1516,7 @@
       if (!state.authenticated) return;
 
       const view = getView();
-      const kpis = view.kpis.map((k) => ({ ...k }));
+      const kpis = adjustKpis(view.kpis);
       if (state.route === 'scenarios' && kpis[0]) {
         kpis[0].value = state.scenario;
       }
@@ -1342,12 +1534,14 @@
         const isActive = btn.dataset.route === state.route;
         btn.classList.toggle('active', isActive);
       });
+      saveState();
     }
 
     function toggleScenario() {
       state.scenario = state.scenario === 'Базовый' ? 'Оптимистичный' : state.scenario === 'Оптимистичный' ? 'Консервативный' : 'Базовый';
       showToast(`Сценарий переключен: ${state.scenario}`);
       if (state.route === 'dashboard' || state.route === 'scenarios') render();
+      saveState();
     }
 
     document.addEventListener('click', (e) => {
@@ -1371,6 +1565,16 @@
           state.period = action.split(':')[1];
           showToast(`Период переключен: ${periodLabels[state.period]}`);
           render();
+          return;
+        }
+
+        if (action.startsWith('toggleAction:')) {
+          const key = action.split(':')[1];
+          if (state.actionHub[key] !== undefined) {
+            state.actionHub[key] = !state.actionHub[key];
+            render();
+            openActionHub();
+          }
           return;
         }
 
@@ -1445,6 +1649,16 @@
             showToast(`Выбрано юрлицо: ${state.legalEntity}`);
             render();
             break;
+          case 'openActionHub':
+            openActionHub();
+            break;
+          case 'resetActionHub':
+            Object.keys(state.actionHub).forEach((key) => {
+              state.actionHub[key] = false;
+            });
+            render();
+            openActionHub();
+            break;
           case 'sync1c':
             showToast('Синхронизация с 1С запущена.');
             break;
@@ -1490,6 +1704,16 @@
     document.addEventListener('keydown', (e) => {
       if (e.key === 'Escape') closeModal();
     });
+
+    loadState();
+    if (state.authenticated) {
+      els.authScreen.classList.add('hidden');
+      els.appRoot.classList.remove('hidden');
+      els.teamName.textContent = state.legalEntity;
+      els.teamMeta.textContent = `${state.userName || 'Demo User'} · ${state.userRole || 'CFO'}`;
+      render();
+      showToast('Состояние демо восстановлено');
+    }
   </script>
 </body>
 </html>
